@@ -77,7 +77,7 @@ public class ConfettiParticle extends SpriteBillboardParticle {
 
             for (int k = 0; k < 4; ++k) {
                 Vector3f Vec3f2 = Vec3fs[k];
-                Vec3f2.rotate(new Quaternionf(rotationX, rotationY, rotationZ, 1));
+                Vec3f2.rotate(eulerToQuaternion(rotationX, rotationY, rotationZ));
                 Vec3f2.normalize(siZe);
                 Vec3f2.add(x, y, z);
             }
@@ -87,7 +87,7 @@ public class ConfettiParticle extends SpriteBillboardParticle {
 
             for (int k = 0; k < 4; ++k) {
                 Vector3f Vec3f2 = Vec3fs[k];
-                Vec3f2.rotate(new Quaternionf(rotationX, rotationY, rotationZ, 1));
+                Vec3f2.rotate(eulerToQuaternion(rotationX, rotationY, rotationZ));
                 Vec3f2.normalize(siZe);
                 Vec3f2.add(x, y + this.groundOffset, z);
             }
@@ -107,6 +107,25 @@ public class ConfettiParticle extends SpriteBillboardParticle {
         vertexConsumer.vertex(Vec3fs[3].x(), Vec3fs[3].y(), Vec3fs[3].z()).texture(maxU, minV).color(red, green, blue, alpha).light(light);
         vertexConsumer.vertex(Vec3fs[2].x(), Vec3fs[2].y(), Vec3fs[2].z()).texture(minU, minV).color(red, green, blue, alpha).light(light);
         vertexConsumer.vertex(Vec3fs[1].x(), Vec3fs[1].y(), Vec3fs[1].z()).texture(minU, maxV).color(red, green, blue, alpha).light(light);
+    }
+
+    public Quaternionf eulerToQuaternion(float x, float y, float z) {
+        x *= ((float) Math.PI / 180F);
+        y *= ((float) Math.PI / 180F);
+        z *= ((float) Math.PI / 180F);
+
+        float f = MathHelper.sin(0.5F * x);
+        float g = MathHelper.cos(0.5F * x);
+        float h = MathHelper.sin(0.5F * y);
+        float i = MathHelper.cos(0.5F * y);
+        float j = MathHelper.sin(0.5F * z);
+        float k = MathHelper.cos(0.5F * z);
+        x = f * i * k + g * h * j;
+        y = g * h * k - f * i * j;
+        z = f * h * k + g * i * j;
+        float w = g * i * k - f * h * j;
+
+        return new Quaternionf(x, y, z, w);
     }
 
     @Override
